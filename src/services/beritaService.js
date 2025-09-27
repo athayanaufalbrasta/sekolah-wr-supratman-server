@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 
-export const buatBeritaBaru = async (data) => {
+const buatBeritaBaru = async (data) => {
 	try {
 		const result = await db.berita.create({
 			data,
@@ -12,7 +12,7 @@ export const buatBeritaBaru = async (data) => {
 	}
 };
 
-export const lihatSemuaBerita = async () => {
+const lihatSemuaBerita = async () => {
 	try {
 		const result = await db.berita.findMany();
 		return result;
@@ -22,7 +22,7 @@ export const lihatSemuaBerita = async () => {
 	}
 };
 
-export const lihatSingleBerita = async (berita_id) => {
+const lihatSingleBerita = async (berita_id) => {
 	try {
 		const result = await db.berita.findUnique({
 			where: {
@@ -36,7 +36,7 @@ export const lihatSingleBerita = async (berita_id) => {
 	}
 };
 
-export const editBerita = async (berita_id, data) => {
+const editBerita = async (berita_id, data) => {
 	try {
 		const result = await db.berita.update({
 			where: {
@@ -51,7 +51,7 @@ export const editBerita = async (berita_id, data) => {
 	}
 };
 
-export const hapusBerita = async (berita_id) => {
+const hapusBerita = async (berita_id) => {
 	try {
 		const result = await db.berita.delete({
 			where: {
@@ -64,3 +64,5 @@ export const hapusBerita = async (berita_id) => {
 		throw error;
 	}
 };
+
+export default { buatBeritaBaru, lihatSemuaBerita, lihatSingleBerita, editBerita, hapusBerita };

@@ -19,9 +19,15 @@ app.use(express.json());
 
 // ROUTES
 import beritaRoutes from "./src/routes/beritaRoute.js";
+import kegiatanRoutes from "./src/routes/kegiatanRoute.js";
+import pengumumanRoutes from "./src/routes/pengumumanRoute.js";
+// import authRoutes from "./src/routes/authRoute.js";
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.use("/api/v1/berita", beritaRoutes);
+app.use("/api/v1/kegiatan", kegiatanRoutes);
+app.use("/api/v1/pengumuman", pengumumanRoutes);
+// app.use("/api/v1/auth", authRoutes);
 
 app.use((err, req, res, next) => {
 	res.json({
@@ -52,3 +58,5 @@ app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);
 	console.log(`Dokumentasi API tersedia di http://localhost:${PORT}/api-docs`);
 });
+
+// export default app;

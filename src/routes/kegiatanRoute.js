@@ -1,5 +1,5 @@
 import express from "express";
-import { buatKegiatanBaru, lihatSemuaKegiatan, lihatSingleKegiatan, editKegiatan, hapusKegiatan } from "../controllers/kegiatanController";
+import { buatKegiatanBaru, lihatSemuaKegiatan, lihatSingleKegiatan, editKegiatan, hapusKegiatan } from "../controllers/kegiatanController.js";
 import { validasiBuatKegiatan, validasiEditKegiatan, validasiHapusKegiatan } from "../validators/kegiatanValidator.js";
 import { checkValidationResult } from "../middlewares/checkValidationResult.js";
 const router = express.Router();

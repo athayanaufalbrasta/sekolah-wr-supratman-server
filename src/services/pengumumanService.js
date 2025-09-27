@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 
-export const buatPengumumanBaru = async (data) => {
+const buatPengumumanBaru = async (data) => {
 	try {
 		const result = await db.pengumuman.create({
 			data,
@@ -12,7 +12,7 @@ export const buatPengumumanBaru = async (data) => {
 	}
 };
 
-export const lihatSemuaPengumuman = async () => {
+const lihatSemuaPengumuman = async () => {
 	try {
 		const result = await db.pengumuman.findMany();
 		return result;
@@ -22,7 +22,7 @@ export const lihatSemuaPengumuman = async () => {
 	}
 };
 
-export const lihatSinglePengumuman = async (pengumuman_id) => {
+const lihatSinglePengumuman = async (pengumuman_id) => {
 	try {
 		const result = await db.pengumuman.findUnique({
 			where: {
@@ -36,7 +36,7 @@ export const lihatSinglePengumuman = async (pengumuman_id) => {
 	}
 };
 
-export const editPengumuman = async (pengumuman_id, data) => {
+const editPengumuman = async (pengumuman_id, data) => {
 	try {
 		const result = await db.pengumuman.update({
 			where: {
@@ -51,7 +51,7 @@ export const editPengumuman = async (pengumuman_id, data) => {
 	}
 };
 
-export const hapusPengumuman = async (pengumuman_id) => {
+const hapusPengumuman = async (pengumuman_id) => {
 	try {
 		const result = await db.pengumuman.delete({
 			where: {
@@ -63,4 +63,12 @@ export const hapusPengumuman = async (pengumuman_id) => {
 		console.error("Terjadi kesalahan di sisi server!", error);
 		throw error;
 	}
+};
+
+export default {
+	buatPengumumanBaru,
+	lihatSemuaPengumuman,
+	lihatSinglePengumuman,
+	editPengumuman,
+	hapusPengumuman,
 };

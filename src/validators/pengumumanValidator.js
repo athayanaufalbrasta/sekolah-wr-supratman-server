@@ -32,8 +32,6 @@ export const validasiBuatPengumuman = [
 	body("audiens_jenjang_id").optional().isInt({ min: 1 }).withMessage("Audiens Jenjang ID harus berupa angka integer positif.").toInt(),
 ];
 
-import { body } from "express-validator";
-
 export const validasiEditPengumuman = [
 	// ID Pengumuman: Wajib ada di body (atau params) dan harus integer positif
 	body("pengumuman_id").isInt({ min: 1 }).withMessage("ID Pengumuman harus berupa angka integer positif.").toInt(),
