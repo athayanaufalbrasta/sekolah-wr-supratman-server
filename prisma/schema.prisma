@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model about {
+  about_id       Int       @id @default(autoincrement())
+  jenis_konten   String    @unique(map: "jenis_konten") @db.VarChar(50)
+  judul          String    @db.VarChar(255)
+  konten         String    @db.Text
+  gambar_url     String?   @db.VarChar(255)
+  updated_at     DateTime? @default(now()) @db.DateTime(0)
+  editor_user_id Int?
+  users          users?    @relation(fields: [editor_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "about_ibfk_1")
+
+  @@index([editor_user_id], map: "editor_user_id")
+}
+
+model berita {
+  berita_id         Int      @id @default(autoincrement())
+  judul             String   @db.VarChar(255)
+  slug              String   @unique(map: "slug") @db.VarChar(255)
+  ringkasan         String?  @db.Text
+  konten_lengkap    String   @db.LongText
+  kategori_id       Int?
+  gambar_utama      String?  @db.VarChar(255)
+  tanggal_publikasi DateTime @db.DateTime(0)
+  penulis_user_id   Int
+  tags              String?  @db.VarChar(255)
+  views_count       Int?     @default(0)
+  users             users    @relation(fields: [penulis_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "berita_ibfk_1")
+
+  @@index([penulis_user_id], map: "penulis_user_id")
+}
+
+model jenjang {
+  jenjang_id     Int              @id @default(autoincrement())
+  nama_jenjang   String           @unique(map: "nama_jenjang") @db.VarChar(50)
+  kode_jenjang   String           @unique(map: "kode_jenjang") @db.VarChar(10)
+  mata_pelajaran mata_pelajaran[]
+}
+
+model kategori_berita {
+  kategori_id   Int     @id @default(autoincrement())
+  nama_kategori String  @unique(map: "nama_kategori") @db.VarChar(100)
+  deskripsi     String? @db.VarChar(255)
+}
+
+model kategori_kegiatan {
+  kategori_id   Int     @id @default(autoincrement())
+  nama_kategori String  @unique(map: "nama_kategori") @db.VarChar(100)
+  deskripsi     String? @db.VarChar(255)
+}
+
+model kegiatan {
+  kegiatan_id     Int              @id @default(autoincrement())
+  nama_kegiatan   String           @db.VarChar(255)
+  slug            String           @unique(map: "slug") @db.VarChar(255)
+  tanggal_mulai   DateTime         @db.DateTime(0)
+  tanggal_selesai DateTime?        @db.DateTime(0)
+  lokasi          String           @db.VarChar(255)
+  deskripsi       String?          @db.Text
+  kategori_id     Int?
+  gambar_utama    String?          @db.VarChar(255)
+  status          kegiatan_status? @default(Akan_Datang)
+  penulis_user_id Int
+  created_at      DateTime?        @default(now()) @db.DateTime(0)
+  users           users            @relation(fields: [penulis_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "kegiatan_ibfk_1")
+
+  @@index([penulis_user_id], map: "penulis_user_id")
+}
+
+model kelas {
+  kelas_id      Int          @id @default(autoincrement())
+  nama_kelas    String       @db.VarChar(100)
+  level_id      Int
+  ta_id         Int
+  wali_kelas_id Int?
+  tahun_ajaran  tahun_ajaran @relation(fields: [ta_id], references: [ta_id], onDelete: NoAction, onUpdate: NoAction, map: "kelas_ibfk_1")
+
+  @@index([ta_id], map: "ta_id")
+}
+
+model kenaikan_kelas {
+  kenaikan_id     Int                            @id @default(autoincrement())
+  siswa_id        Int
+  ta_id           Int
+  kelas_asal_id   Int
+  kelas_tujuan_id Int?
+  status_kenaikan kenaikan_kelas_status_kenaikan
+  keterangan      String?                        @db.Text
+  tanggal_proses  DateTime                       @db.Date
+  user_proses_id  Int
+  users           users                          @relation(fields: [user_proses_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "kenaikan_kelas_ibfk_1")
+
+  @@index([user_proses_id], map: "user_proses_id")
+}
+
+model konten_web {
+  konten_id    Int     @id @default(autoincrement())
+  konten_key   String  @db.Text
+  konten_value String? @db.Text
+}
+
+model mata_pelajaran {
+  mapel_id   Int     @id @default(autoincrement())
+  nama_mapel String  @db.VarChar(150)
+  kode_mapel String? @unique(map: "kode_mapel") @db.VarChar(10)
+  jenjang_id Int
+  jenjang    jenjang @relation(fields: [jenjang_id], references: [jenjang_id], onDelete: NoAction, onUpdate: NoAction, map: "mata_pelajaran_ibfk_1")
+
+  @@index([jenjang_id], map: "jenjang_id")
+}
+
+model nilai {
+  nilai_id        Int       @id @default(autoincrement())
+  siswa_id        Int
+  mapel_id        Int
+  kelas_id        Int
+  ta_id           Int
+  nilai_tugas     Decimal?  @db.Decimal(5, 2)
+  nilai_uts       Decimal?  @db.Decimal(5, 2)
+  nilai_uas       Decimal?  @db.Decimal(5, 2)
+  nilai_akhir     Decimal   @db.Decimal(5, 2)
+  nilai_huruf     String?   @db.Char(2)
+  deskripsi_rapor String?   @db.Text
+  guru_id         Int
+  input_at        DateTime? @default(now()) @db.DateTime(0)
+  updated_at      DateTime? @default(now()) @db.DateTime(0)
+
+  @@unique([siswa_id, mapel_id, ta_id], map: "siswa_id")
+}
+
+model pengumuman {
+  pengumuman_id       Int       @id @default(autoincrement())
+  judul               String    @db.VarChar(255)
+  pesan_singkat       String    @db.Text
+  tanggal_penting     DateTime? @db.Date
+  is_sticky           Boolean?  @default(false)
+  masa_berlaku_sampai DateTime? @db.DateTime(0)
+  audiens_jenjang_id  Int?
+  penulis_user_id     Int
+  created_at          DateTime? @default(now()) @db.DateTime(0)
+  updated_at          DateTime? @default(now()) @db.DateTime(0)
+  users               users     @relation(fields: [penulis_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "pengumuman_ibfk_1")
+
+  @@index([penulis_user_id], map: "penulis_user_id")
+}
+
+model prestasi {
+  prestasi_id           Int                    @id @default(autoincrement())
+  nama_prestasi         String                 @db.VarChar(255)
+  deskripsi             String?                @db.Text
+  tingkat               prestasi_tingkat
+  tahun                 Int
+  tanggal_perolehan     DateTime?              @db.Date
+  tipe_penerima         prestasi_tipe_penerima
+  siswa_id              Int?
+  guru_id               Int?
+  gambar_sertifikat_url String?                @db.VarChar(255)
+  is_published          Boolean?               @default(false)
+  created_at            DateTime?              @default(now()) @db.DateTime(0)
+  penulis_user_id       Int
+  users                 users                  @relation(fields: [penulis_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "prestasi_ibfk_1")
+
+  @@index([penulis_user_id], map: "penulis_user_id")
+}
+
+model role {
+  role_id   Int     @id @default(autoincrement())
+  nama_role String  @unique(map: "nama_role") @db.VarChar(50)
+  users     users[]
+}
+
+model siswa {
+  siswa_id     Int       @id @default(autoincrement())
+  user_id      Int?
+  nis          String    @unique(map: "nis") @db.VarChar(20)
+  nama_lengkap String    @db.VarChar(255)
+  jenjang_id   Int
+  tgl_lahir    DateTime? @db.Date
+  users        users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "siswa_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model tahun_ajaran {
+  ta_id         Int                   @id @default(autoincrement())
+  tahun_mulai   Int                   @db.Year
+  tahun_selesai Int                   @db.Year
+  semester      tahun_ajaran_semester
+  is_aktif      Boolean?              @default(false)
+  kelas         kelas[]
+
+  @@unique([tahun_mulai, semester], map: "tahun_mulai")
+}
+
+model users {
+  user_id        Int              @id @default(autoincrement())
+  username       String           @unique(map: "username") @db.VarChar(100)
+  email          String           @unique(map: "email") @db.VarChar(150)
+  password_hash  String           @db.VarChar(255)
+  nama_lengkap   String           @db.VarChar(255)
+  role_id        Int
+  is_aktif       Boolean?         @default(true)
+  created_at     DateTime?        @default(now()) @db.DateTime(0)
+  about          about[]
+  berita         berita[]
+  kegiatan       kegiatan[]
+  kenaikan_kelas kenaikan_kelas[]
+  pengumuman     pengumuman[]
+  prestasi       prestasi[]
+  siswa          siswa[]
+  role           role             @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+
+  @@index([role_id], map: "role_id")
+}
+
+enum prestasi_tingkat {
+  Sekolah
+  Kabupaten
+  Provinsi
+  Nasional
+  Internasional
+}
+
+enum tahun_ajaran_semester {
+  Ganjil
+  Genap
+}
+
+enum kenaikan_kelas_status_kenaikan {
+  Naik
+  Lulus
+  Tinggal
+}
+
+enum prestasi_tipe_penerima {
+  Siswa
+  Guru
+  Sekolah
+}
+
+enum kegiatan_status {
+  Akan_Datang @map("Akan Datang")
+  Berlangsung
+  Selesai
+  Dibatalkan
+}
