@@ -17,7 +17,11 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// ROUTES
+import beritaRoutes from "./src/routes/beritaRoute.js";
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+app.use("/api/v1/berita", beritaRoutes);
 
 app.use((err, req, res, next) => {
 	res.json({
