@@ -1,8 +1,8 @@
-const session = require("express-session");
-const cookie_parser = require("cookie-parser");
+import cookieParser from "cookie-parser";
+import session from "express-session";
 
 const session_middleware = [
-	cookie_parser(),
+	cookieParser(),
 	session({
 		secret: process.env.JWT_SECRET,
 		resave: false,
