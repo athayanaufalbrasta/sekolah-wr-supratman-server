@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/add", validasiBuatBerita, buatBeritaBaru);
 router.get("/", lihatSemuaBerita);
 router.get("/:id", lihatSingleBerita);
-router.patch("/edit/:id", validasiEditBerita, checkValidationResult, editBerita);
-router.delete("/delete/:id", validasiHapusBerita, checkValidationResult, hapusBerita);
+router.put("/edit/:id", validasiEditBerita, checkValidationResult, editBerita);
+router.delete("/:id", validasiHapusBerita, checkValidationResult, hapusBerita);
 
 export default router;

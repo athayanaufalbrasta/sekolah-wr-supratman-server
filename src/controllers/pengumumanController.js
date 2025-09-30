@@ -36,6 +36,7 @@ export const lihatSinglePengumuman = async (req, res) => {
 		if (!result) {
 			return res.status(404).json({
 				message: "Pengumuman tidak ditemukan",
+				data: null,
 			});
 		}
 		res.status(200).json({
@@ -56,7 +57,8 @@ export const editPengumuman = async (req, res) => {
 		const cariPengumuman = await pengumumanService.lihatSinglePengumuman(id);
 		if (!cariPengumuman) {
 			return res.status(404).json({
-				message: "Pengumuman tidak ditemukan",
+				message: "Pengumuman tidak ditemukan, Gagal melakukan update data",
+				data: null,
 			});
 		}
 
@@ -79,7 +81,8 @@ export const hapusPengumuman = async (req, res) => {
 		const cariPengumuman = await pengumumanService.lihatSinglePengumuman(req.params.Pengumuman_id);
 		if (!cariPengumuman) {
 			return res.status(404).json({
-				message: "Pengumuman tidak ditemukan",
+				message: "Pengumuman tidak ditemukan, Gagal melakukan penghapusan data",
+				data: null,
 			});
 		}
 

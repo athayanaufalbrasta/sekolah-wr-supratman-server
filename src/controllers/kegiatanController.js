@@ -31,11 +31,12 @@ export const lihatSingleKegiatan = async (req, res) => {
 	const { id } = req.params;
 
 	try {
-		const result = await kegiatanService.lihatSingleKegiatan(id);
+		const result = await kegiatanService.lihatSingleKegiatan(Number(id));
 
 		if (!result) {
 			return res.status(404).json({
 				message: "Kegiatan tidak ditemukan",
+				data: null,
 			});
 		}
 		res.status(200).json({
@@ -53,14 +54,15 @@ export const lihatSingleKegiatan = async (req, res) => {
 export const editKegiatan = async (req, res) => {
 	const { id } = req.params;
 	try {
-		const cariKegiatan = await kegiatanService.lihatSingleKegiatan(id);
+		const cariKegiatan = await kegiatanService.lihatSingleKegiatan(Number(id));
 		if (!cariKegiatan) {
 			return res.status(404).json({
-				message: "Kegiatan tidak ditemukan",
+				message: "Kegiatan tidak ditemukan, Gagal melakukan update data",
+				data: null,
 			});
 		}
 
-		const result = await kegiatanService.editKegiatan(id, req.body);
+		const result = await kegiatanService.editKegiatan(Number(id), req.body);
 		res.status(200).json({
 			message: `Kegiatan dengan id ${id} berhasil diupdate`,
 			data: result,
@@ -76,14 +78,15 @@ export const editKegiatan = async (req, res) => {
 export const hapusKegiatan = async (req, res) => {
 	const { id } = req.params;
 	try {
-		const cariKegiatan = await kegiatanService.lihatSingleKegiatan(req.params.Kegiatan_id);
+		const cariKegiatan = await kegiatanService.lihatSingleKegiatan(Number(id));
 		if (!cariKegiatan) {
 			return res.status(404).json({
-				message: "Kegiatan tidak ditemukan",
+				message: "Kegiatan tidak ditemukan, Gagal melakukan penghapusan data",
+				data: null,
 			});
 		}
 
-		const result = await kegiatanService.hapusKegiatan(id);
+		const result = await kegiatanService.hapusKegiatan(Number(id));
 		res.status(200).json({
 			message: `Kegiatan dengan id ${id} berhasil dihapus`,
 			data: result,

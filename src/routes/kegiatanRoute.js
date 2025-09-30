@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/add", validasiBuatKegiatan, buatKegiatanBaru);
 router.get("/", lihatSemuaKegiatan);
 router.get("/:id", lihatSingleKegiatan);
-router.patch("/edit/:id", validasiEditKegiatan, checkValidationResult, editKegiatan);
-router.delete("/delete/:id", validasiHapusKegiatan, checkValidationResult, hapusKegiatan);
+router.put("/edit/:id", validasiEditKegiatan, checkValidationResult, editKegiatan);
+router.delete("/:id", validasiHapusKegiatan, checkValidationResult, hapusKegiatan);
 
 export default router;

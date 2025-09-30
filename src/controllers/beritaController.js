@@ -31,11 +31,12 @@ export const lihatSingleBerita = async (req, res) => {
 	const { id } = req.params;
 
 	try {
-		const result = await beritaService.lihatSingleBerita(id);
+		const result = await beritaService.lihatSingleBerita(Number(id));
 
 		if (!result) {
 			return res.status(404).json({
 				message: "Berita tidak ditemukan",
+				data: null,
 			});
 		}
 		res.status(200).json({
@@ -53,14 +54,15 @@ export const lihatSingleBerita = async (req, res) => {
 export const editBerita = async (req, res) => {
 	const { id } = req.params;
 	try {
-		const cariBerita = await beritaService.lihatSingleBerita(id);
+		const cariBerita = await beritaService.lihatSingleBerita(Number(id));
 		if (!cariBerita) {
 			return res.status(404).json({
-				message: "Berita tidak ditemukan",
+				message: "Berita tidak ditemukan, Gagal melakukan update data",
+				data: null,
 			});
 		}
 
-		const result = await beritaService.editBerita(id, req.body);
+		const result = await beritaService.editBerita(Number(id), req.body);
 		res.status(200).json({
 			message: `Berita dengan id ${id} berhasil diupdate`,
 			data: result,
@@ -76,14 +78,15 @@ export const editBerita = async (req, res) => {
 export const hapusBerita = async (req, res) => {
 	const { id } = req.params;
 	try {
-		const cariBerita = await beritaService.lihatSingleBerita(req.params.berita_id);
+		const cariBerita = await beritaService.lihatSingleBerita(Number(id));
 		if (!cariBerita) {
 			return res.status(404).json({
-				message: "Berita tidak ditemukan",
+				message: "Berita tidak ditemukan, Gagal menghapus",
+				data: null,
 			});
 		}
 
-		const result = await beritaService.hapusBerita(id);
+		const result = await beritaService.hapusBerita(Number(id));
 		res.status(200).json({
 			message: `Berita dengan id ${id} berhasil dihapus`,
 			data: result,
@@ -95,4 +98,3 @@ export const hapusBerita = async (req, res) => {
 		});
 	}
 };
-
