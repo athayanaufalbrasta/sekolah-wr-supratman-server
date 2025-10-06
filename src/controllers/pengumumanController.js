@@ -1,8 +1,8 @@
 import pengumumanService from "../services/pengumumanService.js";
 
-export const buatPengumumanBaru = async (req, res) => {
+export const buatPengumuman = async (req, res) => {
 	try {
-		const result = await pengumumanService.buatPengumumanBaru(req.body);
+		const result = await pengumumanService.buatPengumuman(req.body);
 		res.status(201).json({ message: "Pengumuman berhasil dibuat", data: result });
 	} catch (error) {
 		res.status(500).json({
@@ -12,9 +12,9 @@ export const buatPengumumanBaru = async (req, res) => {
 	}
 };
 
-export const lihatSemuaPengumuman = async (req, res) => {
+export const ambilSemuaPengumuman = async (req, res) => {
 	try {
-		const result = await pengumumanService.lihatSemuaPengumuman();
+		const result = await pengumumanService.ambilSemuaPengumuman();
 		res.status(200).json({
 			message: "Pengumuman berhasil diambil",
 			data: result,
@@ -27,11 +27,11 @@ export const lihatSemuaPengumuman = async (req, res) => {
 	}
 };
 
-export const lihatSinglePengumuman = async (req, res) => {
+export const ambilDetailPengumuman = async (req, res) => {
 	const { id } = req.params;
 
 	try {
-		const result = await pengumumanService.lihatSinglePengumuman(id);
+		const result = await pengumumanService.ambilDetailPengumuman(id);
 
 		if (!result) {
 			return res.status(404).json({
@@ -51,10 +51,10 @@ export const lihatSinglePengumuman = async (req, res) => {
 	}
 };
 
-export const editPengumuman = async (req, res) => {
+export const editPengumumanLengkap = async (req, res) => {
 	const { id } = req.params;
 	try {
-		const cariPengumuman = await pengumumanService.lihatSinglePengumuman(id);
+		const cariPengumuman = await pengumumanService.ambilDetailPengumuman(id);
 		if (!cariPengumuman) {
 			return res.status(404).json({
 				message: "Pengumuman tidak ditemukan, Gagal melakukan update data",
@@ -62,7 +62,31 @@ export const editPengumuman = async (req, res) => {
 			});
 		}
 
-		const result = await pengumumanService.editPengumuman(id, req.body);
+		const result = await pengumumanService.editPengumumanLengkap(id, req.body);
+		res.status(200).json({
+			message: `Pengumuman dengan id ${id} berhasil diupdate`,
+			data: result,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Server Error",
+			serverMessage: error,
+		});
+	}
+};
+
+export const editPengumumanSebagian = async (req, res) => {
+	const { id } = req.params;
+	try {
+		const cariPengumuman = await pengumumanService.ambilDetailPengumuman(id);
+		if (!cariPengumuman) {
+			return res.status(404).json({
+				message: "Pengumuman tidak ditemukan, Gagal melakukan update data",
+				data: null,
+			});
+		}
+
+		const result = await pengumumanService.editPengumumanSebagian(id, req.body);
 		res.status(200).json({
 			message: `Pengumuman dengan id ${id} berhasil diupdate`,
 			data: result,
@@ -78,7 +102,7 @@ export const editPengumuman = async (req, res) => {
 export const hapusPengumuman = async (req, res) => {
 	const { id } = req.params;
 	try {
-		const cariPengumuman = await pengumumanService.lihatSinglePengumuman(req.params.Pengumuman_id);
+		const cariPengumuman = await pengumumanService.ambilDetailPengumuman(req.params.Pengumuman_id);
 		if (!cariPengumuman) {
 			return res.status(404).json({
 				message: "Pengumuman tidak ditemukan, Gagal melakukan penghapusan data",

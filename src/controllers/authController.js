@@ -3,7 +3,7 @@ import authService from "../services/authService.js";
 export const login = async (req, res) => {
 	try {
 		const result = await authService.login(req.body);
-		res.status(200).json({ message: "Login berhasil", data: result, loggedIn: result.userInfo.user_id });
+		res.status(200).json({ message: "Login berhasil", data: result, loggedIn: result.userInfo.username });
 	} catch (error) {
 		const status = error.message.includes("salah") ? 401 : 500;
 		res.status(status).json({ message: "Gagal Login", serverMessage: error.message });

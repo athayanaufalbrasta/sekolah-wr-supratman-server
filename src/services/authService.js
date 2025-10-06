@@ -7,17 +7,23 @@ import { sendEmailVerification } from "../middlewares/mailing_service.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 const RESET_SECRET = process.env.RESET_SECRET;
 
-const login = async ({ username, password }) => {
+const login = async ({ email, password }) => {
 	try {
-		const user = await db.users.findUnique({ where: { username: username }, include: { role: true } });
-		if (!user) throw new Error("Username atau password salah.");
+		const user = await db.users.findUniqueOrThrow({ where: { email }, include: { role: true } });
 
 		const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 		if (!isPasswordValid) throw new Error("Username atau password salah.");
 
-		const accessToken = jwt.sign({ user_id: user.user_id, email: user.email, role_id: user.role_id }, JWT_SECRET, { expiresIn: "1h" });
+		const accessToken = jwt.sign({ user_id: user.user_id, email: user.email, role_id: user.role_id }, JWT_SECRET, { expiresIn: "15m" });
 
-		return { token: accessToken, userInfo: { user_id: user.user_id, username: user.username, role: user.role.nama_role } };
+		return {
+			token: {
+				apiKey: accessToken,
+				crt: jwt.decode(accessToken).iat,
+				exp: jwt.decode(accessToken).exp,
+			},
+			userInfo: { user_id: user.user_id, username: user.username, role: user.role.nama_role },
+		};
 	} catch (error) {
 		throw error;
 	}
@@ -35,7 +41,7 @@ const register = async (data) => {
 				email: data.email,
 				nama_lengkap: data.nama_lengkap,
 				password_hash: hashedPassword,
-				role_id: data.role_id, 
+				role_id: data.role_id,
 			},
 			select: { user_id: true, username: true, email: true, nama_lengkap: true },
 		});
@@ -56,7 +62,7 @@ const forgotPassword = async (email, res) => {
 			return { message: "Email tidak ditemukan" };
 		}
 		const resetToken = jwt.sign({ user_id: user.user_id }, RESET_SECRET, { expiresIn: "10m" });
-		sendEmailVerification(email, resetToken, res);
+		await sendEmailVerification(email, resetToken, res);
 		return { message: "Permintaan reset password telah dikirim ke email anda. Silahkan cek pesan email masuk anda. " };
 	} catch (error) {
 		console.log(error);

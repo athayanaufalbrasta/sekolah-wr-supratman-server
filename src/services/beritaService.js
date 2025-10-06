@@ -1,9 +1,20 @@
 import db from "../config/db.js";
 
-const buatBeritaBaru = async (data) => {
+const buatBerita = async (data) => {
 	try {
 		const result = await db.berita.create({
-			data,
+			data: {
+				judul: data.judul,
+				slug: data.slug,
+				kategori_id: data.kategori_id,
+				konten_lengkap: data.konten_lengkap,
+				ringkasan: data.ringkasan,
+				gambar_utama: data.gambar_utama,
+				kategori: data.kategori,
+				tags: data.tags,
+				editor_user_id: data.editor_user_id,
+				penulis_user_id: data.penulis_user_id,
+			},
 		});
 		return result;
 	} catch (error) {
@@ -12,7 +23,7 @@ const buatBeritaBaru = async (data) => {
 	}
 };
 
-const lihatSemuaBerita = async () => {
+const ambilSemuaBerita = async () => {
 	try {
 		const result = await db.berita.findMany();
 		return result;
@@ -22,7 +33,7 @@ const lihatSemuaBerita = async () => {
 	}
 };
 
-const lihatSingleBerita = async (berita_id) => {
+const ambilDetailBerita = async (berita_id) => {
 	try {
 		const result = await db.berita.findUnique({
 			where: {
@@ -36,7 +47,22 @@ const lihatSingleBerita = async (berita_id) => {
 	}
 };
 
-const editBerita = async (berita_id, data) => {
+const editBeritaLengkap = async (berita_id, data) => {
+	try {
+		const result = await db.berita.update({
+			where: {
+				berita_id,
+			},
+			data,
+		});
+		return result;
+	} catch (error) {
+		console.error("Terjadi kesalahan di sisi server!", error);
+		throw error;
+	}
+};
+
+const editBeritaSebagian = async (berita_id, data) => {
 	try {
 		const result = await db.berita.update({
 			where: {
@@ -65,4 +91,4 @@ const hapusBerita = async (berita_id) => {
 	}
 };
 
-export default { buatBeritaBaru, lihatSemuaBerita, lihatSingleBerita, editBerita, hapusBerita };
+export default { buatBerita, ambilSemuaBerita, ambilDetailBerita, editBeritaLengkap, editBeritaSebagian, hapusBerita };
