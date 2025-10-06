@@ -3,8 +3,6 @@ import morgan from "morgan";
 import { config } from "dotenv";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import swaggerJsdoc from "swagger-jsdoc";
-import swaggerOptions from "./src/config/swaggerDef.js";
 import prisma from "./src/config/db.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -17,14 +15,21 @@ config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-const swaggerSpecs = swaggerJsdoc(swaggerOptions);
+import swaggerDocument from "./src/config/swagger-output.json" with {type: "json"};
 
 // MIDDLEWARES
 app.use(morgan("dev"));
 app.use(session_middleware);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://wr-supratman-server.vercel.app"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // ROUTES
 import beritaRoutes from "./src/routes/beritaRoute.js";
@@ -33,7 +38,7 @@ import pengumumanRoutes from "./src/routes/pengumumanRoute.js";
 import authRoutes from "./src/routes/authRoute.js";
 // import siswaRoutes from "./src/routes/siswaRoute.js";
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs, { explorer: true }));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/v1/berita", beritaRoutes);
 app.use("/api/v1/kegiatan", kegiatanRoutes);
 app.use("/api/v1/pengumuman", pengumumanRoutes);

@@ -63,11 +63,6 @@ npx prisma db seed
 2.  Jalankan **`npx prisma migrate dev`** (beri nama)
 3.  Jalankan **`npx prisma generate`**
 4.  Jalankan **`npx prisma db seed`** (jika perlu data awal)
-
+5.  Jalankan **`npm run dev`** (untuk proses development)
+6.  Jalankan **`npm run swagger:generate && npm start`** (untuk proses production)
 ---
-
-*(Akses di *browser* (online) : `https://wr-supratman-server.vercel.app/`)*
-*(Akses di *browser* (local) : `http://localhost:3000/`)*
-
-*(Akses dokumentasi di *browser* (online) : `https://wr-supratman-server.vercel.app/api-docs/`)*
-*(Akses dokumentasi di *browser* (local) : `http://localhost:3000/api-docs/`)*

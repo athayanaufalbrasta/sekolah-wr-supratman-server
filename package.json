@@ -7,8 +7,9 @@
 		"postinstall": "prisma generate",
 		"seed": "node prisma/seed.js",
 		"clear:db": "node clearDatabase.js",
-		"dev": "nodemon index.js",
-		"start": "nodemon index.js"
+		"dev": "nodemon",
+		"start": "npm run swagger:generate && node index.js",
+		"swagger:generate": "node src/config/swagger.js"
 	},
 	"prisma": {
 		"seed": "node prisma/seed.js"
@@ -33,7 +34,7 @@
 		"mysql2": "^3.15.0",
 		"nodemailer": "^7.0.6",
 		"prisma": "^6.16.2",
-		"swagger-jsdoc": "^6.2.8",
+		"swagger-autogen": "^2.23.7",
 		"swagger-ui-express": "^5.0.1",
 		"uid": "^2.0.2"
 	},
