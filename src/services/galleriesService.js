@@ -1,10 +1,10 @@
+import { uid } from "uid";
 import db from "../config/db.js";
-import { generateSecureRandomInt4 } from "../utils/generateUUID.js";
 
 const addPhoto = async (path_file, caption) => {
 	try {
 		const result = await db.galleries.create({
-			data: { pic_id: generateSecureRandomInt4(), path_file, caption },
+			data: { pic_id: uid(10), path_file, caption },
 		});
 		return result;
 	} catch (error) {
