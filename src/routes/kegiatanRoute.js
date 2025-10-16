@@ -8,14 +8,14 @@ import {
 	hapusKegiatan,
 } from "../controllers/kegiatanController.js";
 // import { validasiBuatKegiatan, validasiEditKegiatan, validasiHapusKegiatan } from "../validators/kegiatanValidator.js";
-// import { checkValidationResult } from "../middlewares/checkValidationResult.js";
 import authenticateJWT from "../middlewares/jwtVerification.js";
+// import csrfProtection from "../middlewares/csrfProtection.js";
 
 const router = express.Router();
 
 router.get(
 	"/",
-	ambilSemuaKegiatan,
+	ambilSemuaKegiatan
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Kegiatan']
@@ -28,8 +28,7 @@ router.get(
 
 router.get(
 	"/:id",
-	authenticateJWT,
-	ambilDetailKegiatan,
+	ambilDetailKegiatan
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Kegiatan']
@@ -43,9 +42,10 @@ router.get(
 
 router.post(
 	"/add",
+	// csrfProtection,
 	authenticateJWT,
 	// validasiBuatKegiatan,
-	buatKegiatan,
+	buatKegiatan
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Kegiatan']
@@ -60,10 +60,10 @@ router.post(
 
 router.put(
 	"/edit/:id",
+	// csrfProtection,
 	authenticateJWT,
 	// validasiEditKegiatan,
-	// checkValidationResult,
-	editKegiatanLengkap,
+	editKegiatanLengkap
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Kegiatan']
@@ -79,10 +79,10 @@ router.put(
 
 router.patch(
 	"/edit/:id",
+	// csrfProtection,
 	authenticateJWT,
 	// validasiEditKegiatan,
-	// checkValidationResult,
-	editKegiatanSebagian,
+	editKegiatanSebagian
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Kegiatan']
@@ -100,8 +100,7 @@ router.delete(
 	"/delete/:id",
 	authenticateJWT,
 	// validasiHapusKegiatan,
-	// checkValidationResult,
-	hapusKegiatan,
+	hapusKegiatan
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Kegiatan']

@@ -1,22 +1,15 @@
+import { uid } from "uid";
 import db from "../config/db.js";
-import { editBeritaSebagian } from "../controllers/beritaController.js";
+import { generateSlug } from "../utils/generateSlug.js";
 
 const buatKegiatan = async (data) => {
 	try {
-		const checkSlug = await db.kegiatan.findUnique({
-			where: {
-				slug: data.slug,
-			},
-		});
-
-		if (checkSlug) {
-			throw {
-				message: "Slug sudah digunakan, silahkan ganti.",
-			};
-		}
-
 		const result = await db.kegiatan.create({
-			data,
+			data: {
+				kegiatan_id: uid(10),
+				slug: generateSlug(data.judul),
+				...data,
+			},
 		});
 		return result;
 	} catch (error) {
@@ -93,4 +86,11 @@ const hapusKegiatan = async (kegiatan_id) => {
 	}
 };
 
-export default { buatKegiatan, ambilSemuaKegiatan, ambilDetailKegiatan, editKegiatanLengkap, editBeritaSebagian, hapusKegiatan };
+export default {
+	buatKegiatan,
+	ambilSemuaKegiatan,
+	ambilDetailKegiatan,
+	editKegiatanLengkap,
+	editKegiatanSebagian,
+	hapusKegiatan,
+};
