@@ -2,7 +2,6 @@ import db from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendEmailVerification } from "../middlewares/mailing_service.js";
-import { uid } from "uid";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const RESET_SECRET = process.env.RESET_SECRET;
@@ -43,7 +42,6 @@ const register = async (data) => {
 		const newUser = await db.users
 			.create({
 				data: {
-					user_id: uid(16),
 					username: data.username,
 					email: data.email,
 					nama_lengkap: data.nama_lengkap,

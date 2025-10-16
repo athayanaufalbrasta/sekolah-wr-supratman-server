@@ -1,5 +1,5 @@
 import slugify from "slugify";
-import { uid } from "uid";
+import { v4 as uuid } from "uuid";
 
 /**
  * Membuat slug dasar (base slug) dari judul setelah memotongnya
@@ -21,5 +21,5 @@ export function generateSlug(title) {
 		locale: "id",
 	});
 
-	return baseSlug + "-" + uid(10) || "untitled-post-" + uid(10);
+	return baseSlug + "-" + uuid() || "untitled-post-" + uuid();
 }

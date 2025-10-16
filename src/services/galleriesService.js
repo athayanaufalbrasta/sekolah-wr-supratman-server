@@ -1,13 +1,11 @@
-import { uid } from "uid";
 import db from "../config/db.js";
 import { supabase } from "../config/supabase.js";
 
 const BUCKET_NAME = "images";
 
 const addPhoto = async (fileBuffer, mimeType, originalName, caption) => {
-	const uniqueId = uid(10);
 	const fileExtension = originalName.split(".").pop();
-	const storagePath = `images/${uniqueId}-${Date.now()}.${fileExtension}`;
+	const storagePath = `images/${originalName}.${fileExtension}`;
 
 	try {
 		const { data: uploadData, error: uploadError } = await supabase.storage
@@ -23,9 +21,8 @@ const addPhoto = async (fileBuffer, mimeType, originalName, caption) => {
 			throw new Error("Gagal mengunggah file ke storage.");
 		}
 
-		const path_file = storagePath;
 		const result = await db.galleries.create({
-			data: { pic_id: uniqueId, path_file, caption },
+			data: { folder_name: "images", pic_name: originalName, caption },
 		});
 		return result;
 	} catch (error) {

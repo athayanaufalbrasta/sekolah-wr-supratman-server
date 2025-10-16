@@ -42,7 +42,7 @@
 		"slugify": "^1.6.6",
 		"swagger-autogen": "^2.23.7",
 		"swagger-ui-express": "^5.0.1",
-		"uid": "^2.0.2"
+		"uuid": "^13.0.0"
 	},
 	"devDependencies": {
 		"cross-env": "^10.0.0",

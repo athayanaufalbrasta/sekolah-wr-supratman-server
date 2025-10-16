@@ -1,4 +1,3 @@
-import { uid } from "uid";
 import db from "../config/db.js";
 import { generateSlug } from "../utils/generateSlug.js";
 
@@ -6,18 +5,8 @@ const buatBerita = async (data) => {
 	try {
 		const result = await db.berita.create({
 			data: {
-				berita_id: uid(10),
 				slug: generateSlug(data.judul),
 				...data,
-
-				// judul: data.judul,
-				// ringkasan: data.ringkasan,
-				// konten_lengkap: data.konten_lengkap,
-				// kategori_id: data.kategori_id,
-				// gambar_utama: data.gambar_utama,
-				// tanggal_publikasi: data.tanggal_publikasi,
-				// penulis_user_id: data.penulis_user_id,
-				// editor_user_id: data.editor_user_id,
 			},
 		});
 		return result;
