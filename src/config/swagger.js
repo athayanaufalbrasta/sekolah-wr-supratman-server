@@ -1,15 +1,21 @@
 import swaggerAutogen from "swagger-autogen";
 import dotenv from "dotenv";
 dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, "../../");
 
 const doc = {
 	info: {
 		title: "WR Supratman API 1.0",
 		description: `Dokumentasi API untuk website Perguruan WR Supratman Medan`,
 	},
-	host: process.env.NODE_ENV === "production" ? process.env.VERCEL_URL : "localhost:3000",
+	host: process.env.VERCEL_ENV === "production" ? process.env.VERCEL_URL : "localhost:3000",
 	basePath: "/",
-	schemes: [process.env.NODE_ENV === "production" ? "https" : "http"],
+	schemes: [process.env.VERCEL_ENV === "production" ? "https" : "http"],
 	consumes: ["application/json"],
 	produces: ["application/json"],
 	tags: [
@@ -19,10 +25,10 @@ const doc = {
 		{ name: "Berita", description: "Endpoint untuk pengelolaan Berita" },
 		{ name: "Kegiatan", description: "Endpoint untuk pengelolaan Kegiatan" },
 		{ name: "Pengumuman", description: "Endpoint untuk pengelolaan Pengumuman" },
-		{
-			name: "Konten Web",
-			description: "Endpoint untuk pengelolaan Web komponen (About, Kontak, dll)",
-		},
+		// {
+		// 	name: "Konten Web",
+		// 	description: "Endpoint untuk pengelolaan Web komponen (About, Kontak, dll)",
+		// },
 		{
 			name: "Galleries",
 			description: "Endpoint untuk pengelolaan Galeri(CRUD dari table GALLERIES)",
@@ -253,14 +259,15 @@ const doc = {
 
 const outputFile = "./swagger-output.json";
 const endpointsFiles = [
-	"../../index.js",
-	"../../src/routes/beritaRoute.js",
-	"../../src/routes/kegiatanRoute.js",
-	"../../src/routes/pengumumanRoute.js",
-	"../../src/routes/authRoute.js",
-	"../../src/routes/userRoute.js",
-	"../../src/routes/siswaRoute.js",
-	"../../src/routes/kontenWebRoute.js",
+	path.join(projectRoot, "index.js"),
+	path.join(projectRoot, "src/routes/beritaRoute.js"),
+	path.join(projectRoot, "src/routes/kegiatanRoute.js"),
+	path.join(projectRoot, "src/routes/pengumumanRoute.js"),
+	path.join(projectRoot, "src/routes/authRoute.js"),
+	path.join(projectRoot, "src/routes/userRoute.js"),
+	path.join(projectRoot, "src/routes/siswaRoute.js"),
+	path.join(projectRoot, "src/routes/kontenWebRoute.js"),
+	path.join(projectRoot, "src/routes/fileUploadRoute.js"),
 ];
 
 swaggerAutogen(outputFile, endpointsFiles, doc);

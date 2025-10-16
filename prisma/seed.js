@@ -239,8 +239,7 @@ async function main() {
   
   // 8. GALERI (Tidak ada FK masuk)
   const galleriesSource = [
-    { folder_name: "2024/HUTRI", pic_name: "upacara_bendera.jpg", caption: "Upacara Peringatan HUT RI ke-79" },
-    { folder_name: "2024/FieldTrip", pic_name: "museum_nasional.jpg", caption: "Kunjungan siswa SMP ke Museum Nasional" },
+    { folder_name: "banners", pic_name: "placeholder-image.jpg", caption: "Gambar untuk testing" },
   ];
   await prisma.galleries.createMany({ data: galleriesSource, skipDuplicates: true });
 

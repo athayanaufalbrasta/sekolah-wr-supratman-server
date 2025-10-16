@@ -1,28 +1,22 @@
 import galleriesService from "../services/galleriesService.js";
 
-const addPhoto = async (req, res) => {
-	const { file, body } = req;
-	const path_file = file.filename;
-	const caption = body.caption;
+const addPhoto = async (req, res, next) => {
+	if (!req.file) {
+		return res.status(400).json({ message: "File foto tidak ditemukan." });
+	}
+
+	const { buffer, mimetype, originalname } = req.file;
+	const { caption } = req.body;
 
 	try {
-		if (!req.file) {
-			return res.status(400).json({ message: "No file uploaded" });
-		}
-		if (!caption) {
-			return res.status(400).json({ message: "Caption is required" });
-		}
+		const newPhoto = await galleriesService.addPhoto(buffer, mimetype, originalname, caption);
 
-		await galleriesService.addPhoto(path_file, caption);
 		res.status(201).json({
-			message: "adding photo success",
-			data: { path_file, caption },
+			message: "Foto berhasil diunggah dan disimpan.",
+			data: newPhoto,
 		});
 	} catch (error) {
-		res.status(500).json({
-			message: "Server Error",
-			serverMessage: error,
-		});
+		next(error);
 	}
 };
 

@@ -1,6 +1,6 @@
 import express from "express";
 import galleriesController from "../controllers/galleriesController.js";
-import { storageGallery } from "../middlewares/uploadMiddleware.js";
+import uploadSinglePhoto from "../middlewares/uploadMiddleware.js";
 import authenticateJWT from "../middlewares/jwtVerification.js";
 
 const router = express.Router();
@@ -9,7 +9,7 @@ const router = express.Router();
 router.post(
 	"/photo/add",
 	authenticateJWT,
-	storageGallery.single("photo"),
+	uploadSinglePhoto,
 	galleriesController.addPhoto
 	/**
 	 * #swagger

@@ -54,9 +54,9 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/galleries", fileUploadRoutes);
 
 // STATIC FILES FROM PUBLIC FOLDER
-app.use("/images", express.static(path.join(__dirname, "./public/images")));
-app.use("/banners", express.static(path.join(__dirname, "./public/banners")));
-app.use("/konten-web", express.static(path.join(__dirname, "./public/keb_contents")));
+// app.use("/images", express.static(path.join(__dirname, "./public/images")));
+// app.use("/banners", express.static(path.join(__dirname, "./public/banners")));
+// app.use("/konten-web", express.static(path.join(__dirname, "./public/keb_contents")));
 
 app.use((err, req, res, next) => {
 	console.error(err.stack);

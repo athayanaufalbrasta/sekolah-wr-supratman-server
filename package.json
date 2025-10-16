@@ -8,7 +8,8 @@
 		"seed": "node prisma/seed.js",
 		"clear:db": "node clearDatabase.js",
 		"dev": "cross-env NODE_ENV=development nodemon",
-		"build": "echo '--- STARTING CUSTOM SWAGGER BUILD PROCESS ---' && rm -f src/config/swagger-output.json && cross-env NODE_ENV=production VERCEL_ENV=production node src/config/swagger.js && echo '--- FINISHED SWAGGER BUILD PROCESS ---'",
+		"build": "echo '--- STARTING CUSTOM SWAGGER BUILD PROCESS ---' && rm -f src/config/swagger-output.json || true && node src/config/swagger.js && echo '--- FINISHED SWAGGER BUILD PROCESS ---'",
+		"deploy": "cross-env NODE_ENV=production VERCEL_ENV=production node src/config/swagger.js && vercel --prod",
 		"start": "node index.js",
 		"prettier:format": "prettier --write .",
 		"prettier:check": "prettier --check ."
@@ -22,6 +23,7 @@
 	"description": "",
 	"dependencies": {
 		"@prisma/client": "^6.16.2",
+		"@supabase/supabase-js": "^2.75.0",
 		"bcrypt": "^6.0.0",
 		"body-parser": "^2.2.0",
 		"cookie-parser": "^1.4.7",
