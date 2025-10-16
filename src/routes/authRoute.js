@@ -1,8 +1,33 @@
 import express from "express";
 import { login, register, forgotPassword, resetPassword } from "../controllers/authController.js";
-// import { validasiLogin, validasiRegister, validasiForgotPassword, validasiResetPassword } from "../validators/authValidator.js";
+import {
+	validasiLogin,
+	validasiRegister,
+	validasiForgotPassword,
+	validasiResetPassword,
+} from "../validators/authValidator.js";
 import authenticateJWT from "../middlewares/jwtVerification.js";
+// import csrfProtection from "../middlewares/csrfProtection.js";
+
 const router = express.Router();
+
+router.get(
+	"/csrf-token",
+	// csrfProtection,
+	(req, res) => {
+		res.status(200).json({ csrfToken: req.csrfToken() });
+	}
+	/**
+	 * #swagger
+	 * #swagger.tags = ['Auth']
+	 * #swagger.path = '/api/v1/auth/csrf-token'
+	 * #swagger.description = 'Mendapatkan token CSRF untuk request POST/PUT/DELETE.'
+	 * #swagger.summary = 'Mendapatkan token CSRF untuk request POST/PUT/DELETE.'
+	 * #swagger.method = 'get'
+	 * #swagger.responses[200] = { description: 'Token CSRF berhasil didapatkan.' }
+	 * #swagger.deprecated = true
+	 */
+);
 
 router.get(
 	"/auth-status",
@@ -10,7 +35,7 @@ router.get(
 	(req, res) => {
 		if (!req.user) return res.status(401).json({ loggedIn: false });
 		res.json({ loggedIn: true, user_info: req.user });
-	},
+	}
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Auth']
@@ -26,8 +51,9 @@ router.get(
 
 router.post(
 	"/login",
-	// validasiLogin,
-	login,
+	// csrfProtection,
+	validasiLogin,
+	login
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Auth']
@@ -41,8 +67,9 @@ router.post(
 
 router.post(
 	"/register",
-	// validasiRegister,
-	register,
+	// csrfProtection,
+	validasiRegister,
+	register
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Auth']
@@ -54,10 +81,12 @@ router.post(
 	 */
 );
 
+// MENGIRIMKAN TOKEN KE EMAIL UNTUK RESET PASSWORD
 router.post(
 	"/forgot-password",
-	// validasiForgotPassword,
-	forgotPassword,
+	// csrfProtection,
+	validasiForgotPassword,
+	forgotPassword
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Auth']
@@ -71,8 +100,9 @@ router.post(
 
 router.post(
 	"/reset-password",
-	// validasiResetPassword,
-	resetPassword,
+	// csrfProtection,
+	validasiResetPassword,
+	resetPassword
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Auth']
@@ -88,6 +118,7 @@ router.post(
 // UNTUK LOGOUT
 router.post(
 	"/clear-session",
+	// csrfProtection,
 	(req, res) => {
 		req.session.destroy((err) => {
 			if (err) {
@@ -97,16 +128,15 @@ router.post(
 			res.clearCookie("connect.sid");
 			res.status(200).json({ message: "Logged out successfully" });
 		});
-	},
+	}
 	/**
 	 * #swagger
 	 * #swagger.tags = ['Auth']
 	 * #swagger.path = '/api/v1/auth/clear-session'
-	 * #swagger.description = 'Menghapus sesi pengguna (Logout).'
-	 * #swagger.summary = 'Menghapus sesi pengguna (Logout).'
+	 * #swagger.description = 'Menghapus sesi pengguna.'
+	 * #swagger.summary = 'Menghapus sesi pengguna.'
 	 * #swagger.method = 'post'
-	 * #swagger.responses[200] = { description: 'Logged out successfully' }
-	 * #swagger.security = [{ "BearerAuth": [] }]
+	 * #swagger.responses[200] = { description: 'Session destroyed' }
 	 */
 );
 
