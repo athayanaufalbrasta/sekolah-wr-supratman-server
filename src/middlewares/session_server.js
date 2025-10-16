@@ -8,7 +8,7 @@ const session_middleware = [
 		resave: false,
 		saveUninitialized: true,
 		cookie: {
-			secure: false,
+			secure: process.env.NODE_ENV === "production" || false,
 			maxAge: 600000,
 		},
 	}),

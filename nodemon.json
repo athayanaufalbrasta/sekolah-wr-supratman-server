@@ -1,8 +1,9 @@
 {
 	"watch": ["index.js", "./src/"],
 	"ext": "js,json",
+	"delay": 1000,
 	"ignore": ["./src/config/swagger-output.json"],
 	"execMap": {
-		"js": "npm run swagger:generate && node"
+		"js": "node src/config/swagger.js && node"
 	}
 }
