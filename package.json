@@ -7,9 +7,11 @@
 		"postinstall": "prisma generate",
 		"seed": "node prisma/seed.js",
 		"clear:db": "node clearDatabase.js",
-		"dev": "nodemon",
-		"start": "npm run swagger:generate && node index.js",
-		"swagger:generate": "node src/config/swagger.js"
+		"dev": "cross-env NODE_ENV=development nodemon",
+		"build": "echo '--- STARTING CUSTOM SWAGGER BUILD PROCESS ---' && rm -f src/config/swagger-output.json && cross-env NODE_ENV=production VERCEL_ENV=production node src/config/swagger.js && echo '--- FINISHED SWAGGER BUILD PROCESS ---'",
+		"start": "node index.js",
+		"prettier:format": "prettier --write .",
+		"prettier:check": "prettier --check ."
 	},
 	"prisma": {
 		"seed": "node prisma/seed.js"
@@ -24,6 +26,7 @@
 		"body-parser": "^2.2.0",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
+		"csurf": "^1.11.0",
 		"dotenv": "^17.2.2",
 		"express": "^5.1.0",
 		"express-session": "^1.18.2",
@@ -34,6 +37,7 @@
 		"mysql2": "^3.15.0",
 		"nodemailer": "^7.0.6",
 		"prisma": "^6.16.2",
+		"slugify": "^1.6.6",
 		"swagger-autogen": "^2.23.7",
 		"swagger-ui-express": "^5.0.1",
 		"uid": "^2.0.2"
@@ -41,6 +45,7 @@
 	"devDependencies": {
 		"cross-env": "^10.0.0",
 		"morgan": "^1.10.1",
-		"nodemon": "^3.1.10"
+		"nodemon": "^3.1.10",
+		"prettier": "^3.6.2"
 	}
 }

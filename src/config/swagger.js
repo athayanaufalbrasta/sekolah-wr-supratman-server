@@ -2,26 +2,31 @@ import swaggerAutogen from "swagger-autogen";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const SWAGGER_URL = process.env.SWAGGER_BASE_URL;
-
 const doc = {
 	info: {
-		title: "WR Supratman API",
+		title: "WR Supratman API 1.0",
 		description: `Dokumentasi API untuk website Perguruan WR Supratman Medan`,
 	},
-	host: SWAGGER_URL,
+	host: process.env.NODE_ENV === "production" ? process.env.VERCEL_URL : "localhost:3000",
 	basePath: "/",
-	schemes: ["http", "https"],
+	schemes: [process.env.NODE_ENV === "production" ? "https" : "http"],
 	consumes: ["application/json"],
 	produces: ["application/json"],
 	tags: [
 		{ name: "Auth", description: "Endpoint untuk otentikasi User (Login, Register, Token)" },
-		// { name: "User", description: "Endpoint untuk pengelolaan data User (Guru, Staf, Admin)" },
-		// { name: "Siswa", description: "Endpoint untuk pengelolaan data Siswa" },
+		{ name: "Users", description: "Endpoint untuk pengelolaan data User (Guru, Staf, Admin)" },
+		{ name: "Siswa", description: "Endpoint untuk pengelolaan data Siswa" },
 		{ name: "Berita", description: "Endpoint untuk pengelolaan Berita" },
 		{ name: "Kegiatan", description: "Endpoint untuk pengelolaan Kegiatan" },
 		{ name: "Pengumuman", description: "Endpoint untuk pengelolaan Pengumuman" },
-		// { name: "Konten Web", description: "Endpoint untuk pengelolaan Web komponen (About, Kontak, dll)" },
+		{
+			name: "Konten Web",
+			description: "Endpoint untuk pengelolaan Web komponen (About, Kontak, dll)",
+		},
+		{
+			name: "Galleries",
+			description: "Endpoint untuk pengelolaan Galeri(CRUD dari table GALLERIES)",
+		},
 	],
 	securityDefinitions: {
 		BearerAuth: {
@@ -164,6 +169,21 @@ const doc = {
 			$penulis_user_id: 0,
 		},
 
+		// =================================================================
+		// GALLERIES
+		// =================================================================
+		Galleries: {
+			$pic_id: 0,
+			$path_file: "",
+			caption: "",
+		},
+		GalleriesReplace: {
+			$path_file: "",
+			caption: "",
+		},
+		GalleriesUpdate: {
+			caption: "",
+		},
 		// // =================================================================
 		// // SISWA
 		// // =================================================================
@@ -238,9 +258,9 @@ const endpointsFiles = [
 	"../../src/routes/kegiatanRoute.js",
 	"../../src/routes/pengumumanRoute.js",
 	"../../src/routes/authRoute.js",
-	// "../../src/routes/userRoute.js",
-	// "../../src/routes/siswaRoute.js",
-	// "../../src/routes/kontenWebRoute.js",
+	"../../src/routes/userRoute.js",
+	"../../src/routes/siswaRoute.js",
+	"../../src/routes/kontenWebRoute.js",
 ];
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
