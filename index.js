@@ -39,7 +39,7 @@ import pengumumanRoutes from "./src/routes/pengumumanRoute.js";
 import authRoutes from "./src/routes/authRoute.js";
 // import siswaRoutes from "./src/routes/siswaRoute.js";
 // import userRoutes from "./src/routes/userRoute.js";
-// import kontenWebRoutes from "./src/routes/kontenWebRoute.js";
+import kontenWebRoutes from "./src/routes/kontenWebRoute.js";
 // import authenticateJWT from "./src/middlewares/jwtVerification.js";
 import fileUploadRoutes from "./src/routes/fileUploadRoute.js";
 
@@ -50,7 +50,7 @@ app.use("/api/v1/pengumuman", pengumumanRoutes);
 app.use("/api/v1/auth", authRoutes);
 // app.use("/api/v1/siswa", authenticateJWT, siswaRoutes);
 // app.use("/api/v1/users", authenticateJWT, userRoutes);
-// app.use("/api/v1/konten-web", kontenWebRoutes);
+app.use("/api/v1/konten-web", kontenWebRoutes);
 app.use("/api/v1/galleries", fileUploadRoutes);
 
 // STATIC FILES FROM PUBLIC FOLDER
