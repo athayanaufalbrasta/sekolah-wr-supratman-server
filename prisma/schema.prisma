@@ -21,16 +21,16 @@ model role {
 }
 
 model users {
-  user_id       Int       @id @default(autoincrement())
+  user_id       String    @id @default(uuid()) @db.Uuid
   username      String    @unique(map: "users_username_unique") @db.VarChar(100)
   email         String    @unique(map: "users_email_unique") @db.VarChar(150)
   password_hash String    @db.VarChar(255)
   nama_lengkap  String    @db.VarChar(255)
-  role_id       Int
-  jabatan       String?   @db.VarChar(100) // PENAMBAHAN: Untuk membedakan Guru/Staf/Kepala Sekolah
+  role_id       Int // PK role masih Int
+  jabatan       String?   @db.VarChar(100)
   is_aktif      Boolean?  @default(true)
   created_at    DateTime? @default(now()) @db.Timestamp(3)
-  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(3) // OPTIMASI: Menggunakan @updatedAt
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(3)
 
   nomor_telefon   String?   @db.VarChar(20)
   login_terakhir  DateTime? @db.Timestamp(3)
@@ -56,7 +56,7 @@ model users {
 }
 
 model jenjang {
-  jenjang_id   Int    @id @default(autoincrement())
+  jenjang_id   String @id @default(uuid()) @db.Uuid
   nama_jenjang String @unique(map: "jenjang_nama_jenjang_unique") @db.VarChar(50)
   kode_jenjang String @unique(map: "jenjang_kode_jenjang_unique") @db.VarChar(10)
 
@@ -68,7 +68,7 @@ model jenjang {
 }
 
 model tahun_ajaran {
-  ta_id         Int                   @id @default(autoincrement())
+  ta_id         String                @id @default(uuid()) @db.Uuid
   tahun_mulai   Int
   tahun_selesai Int
   semester      tahun_ajaran_semester
@@ -87,10 +87,10 @@ model tahun_ajaran {
 // ----------------------------------------------------
 
 model mata_pelajaran {
-  mapel_id   Int     @id @default(autoincrement())
+  mapel_id   String  @id @default(uuid()) @db.Uuid
   nama_mapel String  @db.VarChar(150)
   kode_mapel String? @unique(map: "mapel_kode_mapel_unique") @db.VarChar(10)
-  jenjang_id Int
+  jenjang_id String  @db.Uuid
 
   // Relasi
   jenjang jenjang @relation(fields: [jenjang_id], references: [jenjang_id], onDelete: Cascade, onUpdate: Cascade, map: "mata_pelajaran_ibfk_1")
@@ -102,11 +102,11 @@ model mata_pelajaran {
 }
 
 model kelas {
-  kelas_id      Int    @id @default(autoincrement())
-  nama_kelas    String @db.VarChar(100)
-  level_id      Int // Level_id merujuk ke jenjang_id
-  ta_id         Int
-  wali_kelas_id Int? // Wali_kelas_id merujuk ke user_id
+  kelas_id      String  @id @default(uuid()) @db.Uuid
+  nama_kelas    String  @db.VarChar(100)
+  level_id      String  @db.Uuid // FK ke jenjang.jenjang_id (String/UUID)
+  ta_id         String  @db.Uuid // FK ke tahun_ajaran.ta_id (String/UUID)
+  wali_kelas_id String? @db.Uuid // FK ke users.user_id (String/UUID)
 
   // Relasi
   jenjang      jenjang      @relation(fields: [level_id], references: [jenjang_id])
@@ -118,20 +118,20 @@ model kelas {
   kenaikan_kelas_asal   kenaikan_kelas[] @relation("KelasAsal")
   kenaikan_kelas_tujuan kenaikan_kelas[] @relation("KelasTujuan")
 
-  @@unique([nama_kelas, level_id, ta_id], map: "kelas_unique_per_ta") // Tambahan: Kelas harus unik per level dan tahun ajaran
+  @@unique([nama_kelas, level_id, ta_id], map: "kelas_unique_per_ta")
   @@index([ta_id], map: "kelas_ta_id_index")
   @@index([level_id], map: "kelas_level_id_index")
   @@index([wali_kelas_id], map: "kelas_wali_kelas_id_index")
 }
 
 model siswa {
-  siswa_id      Int       @id @default(autoincrement())
-  user_id       Int?
+  siswa_id      String    @id @default(uuid()) @db.Uuid
+  user_id       String?   @db.Uuid // FK ke users.user_id (String/UUID)
   nis           String    @unique(map: "siswa_nis_unique") @db.VarChar(20)
-  nisn          String?   @unique(map: "siswa_nisn_unique") @db.VarChar(20) // PENAMBAHAN: NISN
+  nisn          String?   @unique(map: "siswa_nisn_unique") @db.VarChar(20)
   jenis_kelamin Gender?
   nama_lengkap  String    @db.VarChar(255)
-  jenjang_id    Int
+  jenjang_id    String    @db.Uuid // FK ke jenjang.jenjang_id (String/UUID)
   tgl_lahir     DateTime? @db.Date
   alamat        String?   @db.Text
   nama_ayah     String?   @db.VarChar(150)
@@ -151,20 +151,20 @@ model siswa {
 }
 
 model nilai {
-  nilai_id        Int       @id @default(autoincrement())
-  siswa_id        Int
-  mapel_id        Int
-  kelas_id        Int
-  ta_id           Int
+  nilai_id        String    @id @default(uuid()) @db.Uuid
+  siswa_id        String    @db.Uuid // FK ke siswa.siswa_id (String/UUID)
+  mapel_id        String    @db.Uuid // FK ke mata_pelajaran.mapel_id (String/UUID)
+  kelas_id        String    @db.Uuid // FK ke kelas.kelas_id (String/UUID)
+  ta_id           String    @db.Uuid // FK ke tahun_ajaran.ta_id (String/UUID)
   nilai_tugas     Decimal?  @db.Decimal(5, 2)
   nilai_uts       Decimal?  @db.Decimal(5, 2)
   nilai_uas       Decimal?  @db.Decimal(5, 2)
   nilai_akhir     Decimal   @db.Decimal(5, 2)
   nilai_huruf     String?   @db.Char(2)
   deskripsi_rapor String?   @db.Text
-  guru_id         Int
+  guru_id         String    @db.Uuid // FK ke users.user_id (String/UUID)
   input_at        DateTime? @default(now()) @db.Timestamp(3)
-  updated_at      DateTime? @default(now()) @updatedAt @db.Timestamp(3) // OPTIMASI: Menggunakan @updatedAt
+  updated_at      DateTime? @default(now()) @updatedAt @db.Timestamp(3)
 
   // Relasi
   siswa          siswa          @relation(fields: [siswa_id], references: [siswa_id])
@@ -182,15 +182,15 @@ model nilai {
 }
 
 model kenaikan_kelas {
-  kenaikan_id     Int                            @id @default(autoincrement())
-  siswa_id        Int
-  ta_id           Int
-  kelas_asal_id   Int
-  kelas_tujuan_id Int?
+  kenaikan_id     String                         @id @default(uuid()) @db.Uuid
+  siswa_id        String                         @db.Uuid // FK ke siswa.siswa_id (String/UUID)
+  ta_id           String                         @db.Uuid // FK ke tahun_ajaran.ta_id (String/UUID)
+  kelas_asal_id   String                         @db.Uuid // FK ke kelas.kelas_id (String/UUID)
+  kelas_tujuan_id String?                        @db.Uuid // FK ke kelas.kelas_id (String/UUID)
   status_kenaikan kenaikan_kelas_status_kenaikan
   keterangan      String?                        @db.Text
   tanggal_proses  DateTime                       @db.Date
-  user_proses_id  Int
+  user_proses_id  String                         @db.Uuid // FK ke users.user_id (String/UUID)
 
   // Relasi
   users        users        @relation(fields: [user_proses_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "kenaikan_kelas_ibfk_1")
@@ -211,22 +211,22 @@ model kenaikan_kelas {
 // ----------------------------------------------------
 
 model about {
-  about_id       Int      @id @default(autoincrement())
+  about_id       String   @id @default(uuid()) @db.Uuid
   jenis_konten   String   @unique(map: "about_jenis_konten_unique") @db.VarChar(50)
   judul          String   @db.VarChar(255)
   konten         String   @db.Text
   gambar_url     String?  @db.VarChar(255)
-  updated_at     DateTime @default(now()) @updatedAt @db.Timestamp(3) // OPTIMASI: Menggunakan @updatedAt
-  editor_user_id Int?
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamp(3)
+  editor_user_id String?  @db.Uuid // FK ke users.user_id (String/UUID)
 
   // Relasi ke Users
-  users users? @relation(fields: [editor_user_id], references: [user_id], onDelete: SetNull, onUpdate: Cascade, map: "about_ibfk_1") // OPTIMASI: SetNull
+  users users? @relation(fields: [editor_user_id], references: [user_id], onDelete: SetNull, onUpdate: Cascade, map: "about_ibfk_1")
 
   @@index([editor_user_id], map: "about_editor_user_id_index")
 }
 
 model kategori_berita {
-  kategori_id   Int     @id @default(autoincrement())
+  kategori_id   String  @id @default(uuid()) @db.Uuid
   nama_kategori String  @unique(map: "kb_nama_kategori_unique") @db.VarChar(100)
   deskripsi     String? @db.VarChar(255)
 
@@ -235,35 +235,35 @@ model kategori_berita {
 }
 
 model berita {
-  berita_id         Int       @id @default(autoincrement())
+  berita_id         String    @id @default(uuid()) @db.Uuid
   judul             String    @db.VarChar(255)
   slug              String    @unique(map: "berita_slug_unique") @db.VarChar(255)
   ringkasan         String?   @db.Text
   konten_lengkap    String
-  kategori_id       Int?
+  kategori_id       String?   @db.Uuid // FK ke kategori_berita.kategori_id (String/UUID)
   gambar_utama      String?   @db.VarChar(255)
   tanggal_publikasi DateTime  @db.Timestamp(3)
-  is_published      Boolean?  @default(false) // PENAMBAHAN: Status Publish/Draft
-  penulis_user_id   Int
+  is_published      Boolean?  @default(true)
+  penulis_user_id   String    @db.Uuid // FK ke users.user_id (String/UUID)
   tags              String?   @db.VarChar(255)
   views_count       Int?      @default(0)
-  is_featured       Boolean?  @default(false)
+  is_featured       Boolean?  @default(true)
   created_at        DateTime? @default(now()) @db.Timestamp(3)
-  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamp(3) // OPTIMASI: Menggunakan @updatedAt
-  editor_user_id    Int?
+  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamp(3)
+  editor_user_id    String?   @db.Uuid // FK ke users.user_id (String/UUID)
 
   // Relasi
-  kategori kategori_berita? @relation(fields: [kategori_id], references: [kategori_id], onDelete: SetNull, onUpdate: Cascade) // PERBAIKAN: Relasi Hilang
+  kategori kategori_berita? @relation(fields: [kategori_id], references: [kategori_id], onDelete: SetNull, onUpdate: Cascade)
   penulis  users            @relation("BeritaPenulis", fields: [penulis_user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "berita_ibfk_1")
   editor   users?           @relation("BeritaEditor", fields: [editor_user_id], references: [user_id], onDelete: SetNull, onUpdate: Cascade)
 
   @@index([penulis_user_id], map: "berita_penulis_user_id_index")
-  @@index([editor_user_id], map: "berita_editor_user_id_index") // Tambahan index
-  @@index([kategori_id], map: "berita_kategori_id_index") // Tambahan index
+  @@index([editor_user_id], map: "berita_editor_user_id_index")
+  @@index([kategori_id], map: "berita_kategori_id_index")
 }
 
 model kategori_kegiatan {
-  kategori_id   Int     @id @default(autoincrement())
+  kategori_id   String  @id @default(uuid()) @db.Uuid
   nama_kategori String  @unique(map: "kk_nama_kategori_unique") @db.VarChar(100)
   deskripsi     String? @db.VarChar(255)
 
@@ -272,41 +272,41 @@ model kategori_kegiatan {
 }
 
 model kegiatan {
-  kegiatan_id     Int              @id @default(autoincrement())
-  judul           String           @db.VarChar(255) // PERUBAHAN: dari nama_kegiatan ke judul (konsistensi)
+  kegiatan_id     String           @id @default(uuid()) @db.Uuid
+  judul           String           @db.VarChar(255)
   slug            String           @unique(map: "kegiatan_slug_unique") @db.VarChar(255)
   tanggal_mulai   DateTime         @db.Timestamp(3)
   tanggal_selesai DateTime?        @db.Timestamp(3)
   lokasi          String           @db.VarChar(255)
   deskripsi       String?          @db.Text
-  kategori_id     Int?
+  kategori_id     String?          @db.Uuid // FK ke kategori_kegiatan.kategori_id (String/UUID)
   gambar_utama    String?          @db.VarChar(255)
   status          kegiatan_status? @default(Akan_Datang)
-  penulis_user_id Int
+  penulis_user_id String           @db.Uuid // FK ke users.user_id (String/UUID)
   created_at      DateTime?        @default(now()) @db.Timestamp(3)
-  updated_at      DateTime?        @default(now()) @updatedAt @db.Timestamp(3) // OPTIMASI: Menggunakan @updatedAt
+  updated_at      DateTime?        @default(now()) @updatedAt @db.Timestamp(3)
   is_featured     Boolean?         @default(false)
 
   // Relasi
   users    users              @relation(fields: [penulis_user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "kegiatan_ibfk_1")
-  kategori kategori_kegiatan? @relation(fields: [kategori_id], references: [kategori_id], onDelete: SetNull, onUpdate: Cascade) // PERBAIKAN: Relasi Hilang
+  kategori kategori_kegiatan? @relation(fields: [kategori_id], references: [kategori_id], onDelete: SetNull, onUpdate: Cascade)
 
   @@index([penulis_user_id], map: "kegiatan_penulis_user_id_index")
-  @@index([kategori_id], map: "kegiatan_kategori_id_index") // Tambahan index
+  @@index([kategori_id], map: "kegiatan_kategori_id_index")
 }
 
 model pengumuman {
-  pengumuman_id       Int       @id @default(autoincrement())
+  pengumuman_id       String    @id @default(uuid()) @db.Uuid
   judul               String    @db.VarChar(255)
   pesan_singkat       String    @db.Text
-  konten_lengkap      String?   @db.Text // PENAMBAHAN: Konten lengkap
+  konten_lengkap      String?   @db.Text
   tanggal_penting     DateTime? @db.Date
   is_sticky           Boolean?  @default(false)
   masa_berlaku_sampai DateTime? @db.Timestamp(3)
-  audiens_jenjang_id  Int?
-  penulis_user_id     Int
+  audiens_jenjang_id  String?   @db.Uuid // FK ke jenjang.jenjang_id (String/UUID)
+  penulis_user_id     String    @db.Uuid // FK ke users.user_id (String/UUID)
   created_at          DateTime? @default(now()) @db.Timestamp(3)
-  updated_at          DateTime? @default(now()) @updatedAt @db.Timestamp(3) // OPTIMASI: Menggunakan @updatedAt
+  updated_at          DateTime? @default(now()) @updatedAt @db.Timestamp(3)
 
   // Relasi
   users   users    @relation(fields: [penulis_user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "pengumuman_ibfk_1")
@@ -317,36 +317,43 @@ model pengumuman {
 }
 
 model konten_web {
-  konten_id    Int     @id @default(autoincrement())
+  konten_id    String  @id @default(uuid()) @db.Uuid
   konten_key   String  @db.Text
   konten_value String? @db.Text
 }
 
+model galleries {
+  pic_id      String    @id @default(uuid()) @db.Uuid
+  folder_name String    @db.VarChar(255)
+  pic_name    String    @db.VarChar(255)
+  caption     String?   @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.Timestamp(3)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(3)
+}
+
 model prestasi {
-  prestasi_id           Int                    @id @default(autoincrement())
+  prestasi_id           String                 @id @default(uuid()) @db.Uuid
   nama_prestasi         String                 @db.VarChar(255)
   deskripsi             String?                @db.Text
   tingkat               prestasi_tingkat
   tahun                 Int
   tanggal_perolehan     DateTime?              @db.Date
   tipe_penerima         prestasi_tipe_penerima
-  siswa_id              Int?
+  siswa_id              String?                @db.Uuid // FK ke siswa.siswa_id (String/UUID)
   gambar_sertifikat_url String?                @db.VarChar(255)
   is_published          Boolean?               @default(false)
   created_at            DateTime?              @default(now()) @db.Timestamp(3)
   updated_at            DateTime?              @default(now()) @updatedAt @db.Timestamp(3)
 
+  // Perhatikan usersUser_id ini harus String?
+  usersUser_id String? @db.Uuid // FK ke users.user_id (String/UUID)
+
   // Relasi
-  siswa        siswa? @relation(fields: [siswa_id], references: [siswa_id])
-  users        users? @relation(fields: [usersUser_id], references: [user_id])
-  usersUser_id Int?
+  siswa siswa? @relation(fields: [siswa_id], references: [siswa_id])
+  users users? @relation(fields: [usersUser_id], references: [user_id])
 
   @@index([siswa_id], map: "prestasi_siswa_id_index")
 }
-
-// ----------------------------------------------------
-// ENUMS
-// ----------------------------------------------------
 
 enum Gender {
   Laki_Laki @map("Laki-Laki")
