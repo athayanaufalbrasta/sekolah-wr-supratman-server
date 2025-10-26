@@ -13,24 +13,41 @@ datasource db {
 // ----------------------------------------------------
 
 model role {
-  role_id   Int    @id @default(autoincrement())
-  nama_role String @unique(map: "role_nama_role_unique") @db.VarChar(50)
+  role_id         Int               @id @default(autoincrement())
+  nama_role       String            @unique(map: "role_nama_role_unique") @db.VarChar(50)
 
   // Relasi Balik
-  users users[]
+  users           users[]
+  role_permission role_permission[]
+}
+
+model role_permission {
+  role_id       Int
+  permission_id Int
+  role          role       @relation(fields: [role_id], references: [role_id], onDelete: Cascade, onUpdate: Cascade, map: "role_permission_ibfk_1")
+  permission    permission @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade, onUpdate: Cascade, map: "role_permission_ibfk_2")
+
+  @@id([role_id, permission_id])
+}
+
+model permission {
+  permission_id   Int               @id @default(autoincrement())
+  nama_permission String            @unique(map: "permission_nama_permission_unique") @db.VarChar(50)
+  grup            PermissionGrup?   // Kolom Grup Permission
+  role_permission role_permission[]
 }
 
 model users {
-  user_id       String    @id @default(uuid()) @db.Uuid
-  username      String    @unique(map: "users_username_unique") @db.VarChar(100)
-  email         String    @unique(map: "users_email_unique") @db.VarChar(150)
-  password_hash String    @db.VarChar(255)
-  nama_lengkap  String    @db.VarChar(255)
-  role_id       Int // PK role masih Int
-  jabatan       String?   @db.VarChar(100)
-  is_aktif      Boolean?  @default(true)
-  created_at    DateTime? @default(now()) @db.Timestamp(3)
-  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(3)
+  user_id         String    @id @default(uuid()) @db.Uuid
+  username        String    @unique(map: "users_username_unique") @db.VarChar(100)
+  email           String    @unique(map: "users_email_unique") @db.VarChar(150)
+  password_hash   String    @db.VarChar(255)
+  nama_lengkap    String    @db.VarChar(255)
+  role_id         Int // PK role masih Int
+  jabatan         String?   @db.VarChar(100)
+  is_aktif        Boolean?  @default(true)
+  created_at      DateTime? @default(now()) @db.Timestamp(3)
+  updated_at      DateTime? @default(now()) @updatedAt @db.Timestamp(3)
 
   nomor_telefon   String?   @db.VarChar(20)
   login_terakhir  DateTime? @db.Timestamp(3)
@@ -41,24 +58,21 @@ model users {
   role role @relation(fields: [role_id], references: [role_id], onDelete: Cascade, onUpdate: Cascade, map: "users_ibfk_1")
 
   // Relasi Balik
-  about          about[]
-  beritaPenulis  berita[]         @relation("BeritaPenulis")
-  beritaEditor   berita[]         @relation("BeritaEditor")
+  beritaPenulis  berita[]           @relation("BeritaPenulis")
+  beritaEditor   berita[]           @relation("BeritaEditor")
   kegiatan       kegiatan[]
   kenaikan_kelas kenaikan_kelas[]
   pengumuman     pengumuman[]
-  siswa          siswa[]
-  wali_kelas     kelas[]          @relation("WaliKelas")
-  nilai_guru     nilai[]          @relation("NilaiGuru")
-  prestasi       prestasi[]
+  wali_kelas     kelas[]            @relation("WaliKelas")
+  nilai_guru     nilai[]            @relation("NilaiGuru")
 
   @@index([role_id], map: "users_role_id_index")
 }
 
 model jenjang {
-  jenjang_id   String @id @default(uuid()) @db.Uuid
-  nama_jenjang String @unique(map: "jenjang_nama_jenjang_unique") @db.VarChar(50)
-  kode_jenjang String @unique(map: "jenjang_kode_jenjang_unique") @db.VarChar(10)
+  jenjang_id     String           @id @default(uuid()) @db.Uuid
+  nama_jenjang   String           @unique(map: "jenjang_nama_jenjang_unique") @db.VarChar(50)
+  kode_jenjang   String           @unique(map: "jenjang_kode_jenjang_unique") @db.VarChar(10)
 
   // Relasi Balik
   mata_pelajaran mata_pelajaran[]
@@ -87,10 +101,10 @@ model tahun_ajaran {
 // ----------------------------------------------------
 
 model mata_pelajaran {
-  mapel_id   String  @id @default(uuid()) @db.Uuid
-  nama_mapel String  @db.VarChar(150)
-  kode_mapel String? @unique(map: "mapel_kode_mapel_unique") @db.VarChar(10)
-  jenjang_id String  @db.Uuid
+  mapel_id   String    @id @default(uuid()) @db.Uuid
+  nama_mapel String    @db.VarChar(150)
+  kode_mapel String?   @unique(map: "mapel_kode_mapel_unique") @db.VarChar(10)
+  jenjang_id String    @db.Uuid
 
   // Relasi
   jenjang jenjang @relation(fields: [jenjang_id], references: [jenjang_id], onDelete: Cascade, onUpdate: Cascade, map: "mata_pelajaran_ibfk_1")
@@ -102,11 +116,11 @@ model mata_pelajaran {
 }
 
 model kelas {
-  kelas_id      String  @id @default(uuid()) @db.Uuid
-  nama_kelas    String  @db.VarChar(100)
-  level_id      String  @db.Uuid // FK ke jenjang.jenjang_id (String/UUID)
-  ta_id         String  @db.Uuid // FK ke tahun_ajaran.ta_id (String/UUID)
-  wali_kelas_id String? @db.Uuid // FK ke users.user_id (String/UUID)
+  kelas_id        String    @id @default(uuid()) @db.Uuid
+  nama_kelas      String    @db.VarChar(100)
+  level_id        String    @db.Uuid // FK ke jenjang.jenjang_id (String/UUID)
+  ta_id           String    @db.Uuid // FK ke tahun_ajaran.ta_id (String/UUID)
+  wali_kelas_id   String?   @db.Uuid // FK ke users.user_id (String/UUID)
 
   // Relasi
   jenjang      jenjang      @relation(fields: [level_id], references: [jenjang_id])
@@ -125,29 +139,60 @@ model kelas {
 }
 
 model siswa {
-  siswa_id      String    @id @default(uuid()) @db.Uuid
-  user_id       String?   @db.Uuid // FK ke users.user_id (String/UUID)
-  nis           String    @unique(map: "siswa_nis_unique") @db.VarChar(20)
-  nisn          String?   @unique(map: "siswa_nisn_unique") @db.VarChar(20)
-  jenis_kelamin Gender?
-  nama_lengkap  String    @db.VarChar(255)
-  jenjang_id    String    @db.Uuid // FK ke jenjang.jenjang_id (String/UUID)
-  tgl_lahir     DateTime? @db.Date
-  alamat        String?   @db.Text
-  nama_ayah     String?   @db.VarChar(150)
-  nama_ibu      String?   @db.VarChar(150)
+  siswa_id       String    @id @default(uuid()) @db.Uuid
+  nis            String    @unique(map: "siswa_nis_unique") @db.VarChar(20)
+  nisn           String?   @unique(map: "siswa_nisn_unique") @db.VarChar(20)
+  nama_lengkap   String    @db.VarChar(255)
+  jenis_kelamin  Gender?
+  jenjang_id     String    @db.Uuid // FK ke jenjang.jenjang_id (String/UUID)
+  tempat_lahir   String?   @db.VarChar(150)
+  tgl_lahir      DateTime? @db.Date
+  agama          Agama?
+  gol_darah      GolDarah?
+  anak_ke        Int?
+  jumlah_saudara Int?
+  alamat         String?   @db.Text
 
   // Relasi
-  users   users?  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "siswa_ibfk_1")
   jenjang jenjang @relation(fields: [jenjang_id], references: [jenjang_id])
-
   // Relasi Balik
+  orang_tua      orang_tua[]
   nilai          nilai[]
-  prestasi       prestasi[]
   kenaikan_kelas kenaikan_kelas[]
+  dokumen_siswa  dokumen_siswa[]
 
-  @@index([user_id], map: "siswa_user_id_index")
   @@index([jenjang_id], map: "siswa_jenjang_id_index")
+}
+
+model dokumen_siswa {
+  dokumen_siswa_id String       @id @default(uuid()) @db.Uuid
+  siswa_id         String       @db.Uuid // FK WAJIB ke siswa.siswa_id
+  nama_dokumen     String       @db.VarChar(255)
+  file             String       @db.VarChar(255)
+  jenis_dokumen    JenisDokumen
+
+  // Relasi: Menggunakan siswa_id sebagai FK
+  siswa siswa @relation(fields: [siswa_id], references: [siswa_id])
+
+  @@index([siswa_id])
+}
+
+model orang_tua {
+  orang_tua_id         String    @id @default(uuid()) @db.Uuid
+  siswa_id             String    @db.Uuid // TAMBAHAN: FK WAJIB ke siswa.siswa_id
+  nama                 String    @db.VarChar(150)
+  tempat_lahir         String?   @db.VarChar(150)
+  tgl_lahir            DateTime?
+  agama                Agama?
+  pendidikan_tertinggi String?   @db.VarChar(150)
+  alamat               String?   @db.Text
+  pekerjaan            String?   @db.VarChar(150)
+  nomor_hp             String?   @db.VarChar(20)
+
+  // Relasi
+  siswa siswa @relation(fields: [siswa_id], references: [siswa_id])
+
+  @@index([siswa_id])
 }
 
 model nilai {
@@ -182,22 +227,22 @@ model nilai {
 }
 
 model kenaikan_kelas {
-  kenaikan_id     String                         @id @default(uuid()) @db.Uuid
-  siswa_id        String                         @db.Uuid // FK ke siswa.siswa_id (String/UUID)
-  ta_id           String                         @db.Uuid // FK ke tahun_ajaran.ta_id (String/UUID)
-  kelas_asal_id   String                         @db.Uuid // FK ke kelas.kelas_id (String/UUID)
-  kelas_tujuan_id String?                        @db.Uuid // FK ke kelas.kelas_id (String/UUID)
-  status_kenaikan kenaikan_kelas_status_kenaikan
-  keterangan      String?                        @db.Text
-  tanggal_proses  DateTime                       @db.Date
-  user_proses_id  String                         @db.Uuid // FK ke users.user_id (String/UUID)
+  kenaikan_id       String                       @id @default(uuid()) @db.Uuid
+  siswa_id          String                       @db.Uuid // FK ke siswa.siswa_id (String/UUID)
+  ta_id             String                       @db.Uuid // FK ke tahun_ajaran.ta_id (String/UUID)
+  kelas_asal_id     String                       @db.Uuid // FK ke kelas.kelas_id (String/UUID)
+  kelas_tujuan_id   String?                      @db.Uuid // FK ke kelas.kelas_id (String/UUID)
+  status_kenaikan   kenaikan_kelas_status_kenaikan
+  keterangan        String?                      @db.Text
+  tanggal_proses    DateTime                     @db.Date
+  user_proses_id    String                       @db.Uuid // FK ke users.user_id (String/UUID)
 
   // Relasi
-  users        users        @relation(fields: [user_proses_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "kenaikan_kelas_ibfk_1")
-  siswa        siswa        @relation(fields: [siswa_id], references: [siswa_id])
-  tahun_ajaran tahun_ajaran @relation(fields: [ta_id], references: [ta_id])
-  kelas_asal   kelas        @relation("KelasAsal", fields: [kelas_asal_id], references: [kelas_id])
-  kelas_tujuan kelas?       @relation("KelasTujuan", fields: [kelas_tujuan_id], references: [kelas_id])
+  users          users        @relation(fields: [user_proses_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "kenaikan_kelas_ibfk_1")
+  siswa          siswa        @relation(fields: [siswa_id], references: [siswa_id])
+  tahun_ajaran   tahun_ajaran @relation(fields: [ta_id], references: [ta_id])
+  kelas_asal     kelas        @relation("KelasAsal", fields: [kelas_asal_id], references: [kelas_id])
+  kelas_tujuan   kelas?       @relation("KelasTujuan", fields: [kelas_tujuan_id], references: [kelas_id])
 
   @@index([user_proses_id], map: "kenaikan_kelas_user_proses_id_index")
   @@index([siswa_id], map: "kenaikan_kelas_siswa_id_index")
@@ -210,21 +255,6 @@ model kenaikan_kelas {
 // MODEL KONTEN WEBSITE
 // ----------------------------------------------------
 
-model about {
-  about_id       String   @id @default(uuid()) @db.Uuid
-  jenis_konten   String   @unique(map: "about_jenis_konten_unique") @db.VarChar(50)
-  judul          String   @db.VarChar(255)
-  konten         String   @db.Text
-  gambar_url     String?  @db.VarChar(255)
-  updated_at     DateTime @default(now()) @updatedAt @db.Timestamp(3)
-  editor_user_id String?  @db.Uuid // FK ke users.user_id (String/UUID)
-
-  // Relasi ke Users
-  users users? @relation(fields: [editor_user_id], references: [user_id], onDelete: SetNull, onUpdate: Cascade, map: "about_ibfk_1")
-
-  @@index([editor_user_id], map: "about_editor_user_id_index")
-}
-
 model kategori_berita {
   kategori_id   String  @id @default(uuid()) @db.Uuid
   nama_kategori String  @unique(map: "kb_nama_kategori_unique") @db.VarChar(100)
@@ -235,22 +265,22 @@ model kategori_berita {
 }
 
 model berita {
-  berita_id         String    @id @default(uuid()) @db.Uuid
-  judul             String    @db.VarChar(255)
-  slug              String    @unique(map: "berita_slug_unique") @db.VarChar(255)
-  ringkasan         String?   @db.Text
+  berita_id         String            @id @default(uuid()) @db.Uuid
+  judul             String            @db.VarChar(255)
+  slug              String            @unique(map: "berita_slug_unique") @db.VarChar(255)
+  ringkasan         String?           @db.Text
   konten_lengkap    String
-  kategori_id       String?   @db.Uuid // FK ke kategori_berita.kategori_id (String/UUID)
-  gambar_utama      String?   @db.VarChar(255)
-  tanggal_publikasi DateTime  @db.Timestamp(3)
-  is_published      Boolean?  @default(true)
-  penulis_user_id   String    @db.Uuid // FK ke users.user_id (String/UUID)
-  tags              String?   @db.VarChar(255)
-  views_count       Int?      @default(0)
-  is_featured       Boolean?  @default(true)
-  created_at        DateTime? @default(now()) @db.Timestamp(3)
-  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamp(3)
-  editor_user_id    String?   @db.Uuid // FK ke users.user_id (String/UUID)
+  kategori_id       String?           @db.Uuid // FK ke kategori_berita.kategori_id (String/UUID)
+  gambar_utama      String?           @db.VarChar(255)
+  tanggal_publikasi DateTime          @db.Timestamp(3)
+  is_published      Boolean?          @default(true)
+  penulis_user_id   String            @db.Uuid // FK ke users.user_id (String/UUID)
+  tags              String?           @db.VarChar(255)
+  views_count       Int?              @default(0)
+  is_featured       Boolean?          @default(true)
+  created_at        DateTime?         @default(now()) @db.Timestamp(3)
+  updated_at        DateTime          @default(now()) @updatedAt @db.Timestamp(3)
+  editor_user_id    String?           @db.Uuid // FK ke users.user_id (String/UUID)
 
   // Relasi
   kategori kategori_berita? @relation(fields: [kategori_id], references: [kategori_id], onDelete: SetNull, onUpdate: Cascade)
@@ -288,7 +318,7 @@ model kegiatan {
   is_featured     Boolean?         @default(false)
 
   // Relasi
-  users    users              @relation(fields: [penulis_user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "kegiatan_ibfk_1")
+  users    users            @relation(fields: [penulis_user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "kegiatan_ibfk_1")
   kategori kategori_kegiatan? @relation(fields: [kategori_id], references: [kategori_id], onDelete: SetNull, onUpdate: Cascade)
 
   @@index([penulis_user_id], map: "kegiatan_penulis_user_id_index")
@@ -331,29 +361,6 @@ model galleries {
   updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(3)
 }
 
-model prestasi {
-  prestasi_id           String                 @id @default(uuid()) @db.Uuid
-  nama_prestasi         String                 @db.VarChar(255)
-  deskripsi             String?                @db.Text
-  tingkat               prestasi_tingkat
-  tahun                 Int
-  tanggal_perolehan     DateTime?              @db.Date
-  tipe_penerima         prestasi_tipe_penerima
-  siswa_id              String?                @db.Uuid // FK ke siswa.siswa_id (String/UUID)
-  gambar_sertifikat_url String?                @db.VarChar(255)
-  is_published          Boolean?               @default(false)
-  created_at            DateTime?              @default(now()) @db.Timestamp(3)
-  updated_at            DateTime?              @default(now()) @updatedAt @db.Timestamp(3)
-
-  // Perhatikan usersUser_id ini harus String?
-  usersUser_id String? @db.Uuid // FK ke users.user_id (String/UUID)
-
-  // Relasi
-  siswa siswa? @relation(fields: [siswa_id], references: [siswa_id])
-  users users? @relation(fields: [usersUser_id], references: [user_id])
-
-  @@index([siswa_id], map: "prestasi_siswa_id_index")
-}
 
 enum Gender {
   Laki_Laki @map("Laki-Laki")
@@ -390,4 +397,40 @@ enum kegiatan_status {
   Berlangsung
   Selesai
   Dibatalkan
+}
+
+enum Agama {
+  Islam
+  Kristen
+  Katolik
+  Hindu
+  Budha
+  Konghucu
+  Lainnya
+}
+
+enum GolDarah {
+  A
+  B
+  AB
+  O
+}
+
+enum JenisDokumen {
+  AkteKelahiran
+  KartuKeluarga
+  BuktiTransfer
+}
+
+enum PermissionGrup {
+  dashboard
+  user
+  siswa
+  guru
+  kelas
+  mapel
+  nilai
+  media
+  berita
+  pengumuman
 }
