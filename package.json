@@ -2,15 +2,14 @@
 	"name": "be",
 	"version": "1.0.0",
 	"main": "index.js",
-	"type": "module",
 	"scripts": {
 		"postinstall": "prisma generate",
-		"seed": "node prisma/seed.js",
-		"clear:db": "node clearDatabase.js",
+		"seed": "ts-node prisma/seed.ts",
+		"clear:db": "ts-node clearDatabase.ts",
 		"dev": "cross-env NODE_ENV=development nodemon",
-		"build": "echo '--- STARTING CUSTOM SWAGGER BUILD PROCESS ---' && rm -f src/config/swagger-output.json || true && node src/config/swagger.js && echo '--- FINISHED SWAGGER BUILD PROCESS ---'",
-		"deploy": "cross-env NODE_ENV=production VERCEL_ENV=production node src/config/swagger.js && vercel --prod",
-		"start": "node index.js",
+		"build": "echo '--- STARTING CUSTOM SWAGGER BUILD PROCESS ---' && rm -f src/config/swagger-output.json && ts-node src/config/swagger.ts && npx tsc && echo '--- FINISHED SWAGGER BUILD PROCESS ---'",
+		"deploy": "cross-env NODE_ENV=production VERCEL_ENV=production npm run build && vercel --prod",
+		"start": "node dist/index.js",
 		"prettier:format": "prettier --write .",
 		"prettier:check": "prettier --check ."
 	},
@@ -45,9 +44,24 @@
 		"uuid": "^13.0.0"
 	},
 	"devDependencies": {
+		"@types/bcrypt": "^6.0.0",
+		"@types/body-parser": "^1.19.6",
+		"@types/cookie-parser": "^1.4.9",
+		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.3",
+		"@types/express-session": "^1.18.2",
+		"@types/jsonwebtoken": "^9.0.10",
+		"@types/morgan": "^1.9.10",
+		"@types/multer": "^2.0.0",
+		"@types/node": "^24.9.1",
+		"@types/nodemailer": "^7.0.2",
+		"@types/swagger-ui-express": "^4.1.8",
+		"@types/uuid": "^10.0.0",
 		"cross-env": "^10.0.0",
 		"morgan": "^1.10.1",
 		"nodemon": "^3.1.10",
-		"prettier": "^3.6.2"
+		"prettier": "^3.6.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.9.3"
 	}
 }

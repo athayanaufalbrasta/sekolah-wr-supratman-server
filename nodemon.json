@@ -1,9 +1,7 @@
 {
-	"watch": ["index.js", "./src/"],
-	"ext": "js,json",
+	"watch": ["index.ts", "./src/**/*.ts"],
+	"ext": "ts,json",
 	"delay": 1000,
 	"ignore": ["./src/config/swagger-output.json"],
-	"execMap": {
-		"js": "node src/config/swagger.js && node"
-	}
+	"exec": "ts-node src/config/swagger.ts && ts-node index.ts"
 }

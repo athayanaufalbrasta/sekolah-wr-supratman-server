@@ -1,0 +1,40 @@
+{
+	"compilerOptions": {
+		// --- OUTPUT & FOLDER CONFIGURATION ---
+		"rootDir": "./",
+		"outDir": "./dist",
+		"sourceMap": true,
+		"declaration": false,
+		"declarationMap": false,
+
+		// --- ENVIRONMENT & MODULE RESOLUTION (Penting untuk ES Modules) ---
+		// DIUBAH: Menggunakan nodenext agar mendukung import.meta dan sintaks ES Module
+		"module": "nodenext", 
+		"target": "ES2022",
+		// DIUBAH: Menggunakan nodenext agar resolusi paket sesuai dengan cara kerja Node.js ES Module
+		"moduleResolution": "nodenext", 
+		"lib": ["ES2022"],
+
+		// --- JS INTEROP & FILE HANDLING ---
+		"esModuleInterop": true,
+		"allowJs": true,
+		"checkJs": true,
+		"resolveJsonModule": true,
+		"moduleDetection": "force",
+
+		// --- STRICTNESS & TYPECHECKING ---
+		"strict": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": false,
+		"noFallthroughCasesInSwitch": false,
+
+		// --- LAIN-LAIN ---
+		"jsx": "react-jsx"
+	},
+	"include": ["src/**/*.ts", "index.ts", "swagger.ts"], 
+	// DITAMBAH: Pastikan swagger.ts termasuk jika berada di luar folder src
+	"exclude": ["node_modules", "dist", "__tests__"]
+}
